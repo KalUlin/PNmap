@@ -11,7 +11,10 @@ function Export-NmapToCsv {
         $FileBaseName
     ) 
 
+    if (-not (Test-Path -Path $FolderPath)) {
+        New-Item -Path ($FolderPath) -ItemType Directory |out-null
+    }
     $FileName = $FileBaseName + ".csv"
     $FileFullPath = Join-Path -Path $FolderPath -ChildPath $FileName
-    $NmapObject |Export-Csv -Path $FileFullPath
+    $NmapObject | Export-Csv -Path $FileFullPath
 }

@@ -1,16 +1,17 @@
-$Script:Config = @{
-    AutoExportToCsv     = $true
-    CsvExportFolderPath = "c:\PNmap\"
-    XmlTempFolderPath   = $env:temp
-}
 $Script:NmapPresets = [ordered]@{
-    Regular                       = ''
-    RegularWithOsVersion          = "-O"
-    RegularWithOsAndPortVersion   = "-O -sV"
-    QuickScanNoPortNoDns          = "-sn -n -T4"
-    QuickScanNoPortWithDns        = "-sn -T4"
-    FullPortScan                  = "-p-" 
-    FullPortScanOSwithPortVersion = "-p- -sV -O"
+
+    Intense              = '-T4 -A -v'
+    IntensePlusUDP       = '-sS -sU -T4 -A -v'
+    IntenseAllTcpPorts   = '-p 1-65535 -T4 -A -v'
+    IntenseNoPing        = '-T4 -A -v -Pn'
+    PingScan             = '-sn'
+    QuickScan            = '-T4 -F'
+    QuickScanPlus        = '-sV -T4 -O -F --version-light'
+    QuickTraceroute      = '-sn -traceroute'
+    Regular              = ""
+    SlowComprehensive    = '-sS -sU -T4 -A -v -PE -PP -PS80,443 -PA3389 -PU40125 -PY -g 53 -script "default or (discovery and safe)"'
+
+    QuickScanNoPortNoDns = "-sn -n -T4"
 }
 
 $ScriptBlock_Preset = {
@@ -26,12 +27,27 @@ function Invoke-PNmap {
         [Parameter(Position = 0, ParameterSetName = 'Custom')]
         [string]
         $Target,
-        [Parameter(ParameterSetName = 'Custom', Position = 1)]
+        [Parameter(Position = 1, ParameterSetName = 'Custom')]
         [string]
         $ArgumentString,
-        [Parameter(ParameterSetName = 'Preset', Position = 2)]
+        [Parameter(Position = 2, ParameterSetName = 'Preset' )]
         [string]
-        $Preset 
+        $Preset ,
+        [Parameter(Position = 3, ParameterSetName = 'Simple')]
+        [Parameter(Position = 3, ParameterSetName = 'Preset')]
+        [Parameter(Position = 3, ParameterSetName = 'Custom')]
+        [string]
+        $AutoExportToCsv = $true,
+        [Parameter(Position = 4, ParameterSetName = 'Simple')]
+        [Parameter(Position = 4, ParameterSetName = 'Preset')]
+        [Parameter(Position = 4, ParameterSetName = 'Custom')]
+        [string]
+        $CsvExportFolderPath = "$($env:systemdrive)\PNmap\",
+        [Parameter(Position = 5, ParameterSetName = 'Simple')]
+        [Parameter(Position = 5, ParameterSetName = 'Preset')]
+        [Parameter(Position = 5, ParameterSetName = 'Custom')]
+        [string]
+        $XmlTempFolderPath = $env:temp
     )
 
     if ([string]::isnullorwhitespace($Target)) {
@@ -49,7 +65,7 @@ function Invoke-PNmap {
         
         $FileBaseName = "nmap_" + (Get-Date -Format "yyyy-MM-dd_HH-mm-ss")
         $FileNameXml = $FileBaseName + ".xml"
-        $FileNameXmlFullPath = (Join-Path -Path $Script:Config.XmlTempFolderPath -ChildPath $FileNameXml)
+        $FileNameXmlFullPath = (Join-Path -Path $XmlTempFolderPath -ChildPath $FileNameXml)
         $ArgumentString += " -oX " + $FileNameXmlFullPath
         
         $ArgumentArray = @($Target)
@@ -71,11 +87,8 @@ function Invoke-PNmap {
             
             Show-NmapOutput -NmapObject $NmapObject
             
-            if ($script:Config.AutoExportToCsv -eq $true) {
-                if (-not (Test-Path -Path $($script:config.CsvExportFolderPath))) {
-                    New-Item -Path ($script:config.CsvExportFolderPath) -ItemType Directory
-                }
-                Export-NmapToCsv -NmapObject $NmapObject -FolderPath ($script:config.CsvExportFolderPath) -FileBaseName $FileBaseName
+            if ($AutoExportToCsv -eq $true) {
+                Export-NmapToCsv -NmapObject $NmapObject -FolderPath ($CsvExportFolderPath) -FileBaseName $FileBaseName
             }
             
         }
