@@ -1,12 +1,19 @@
+<#
+.SYNOPSIS
+    Shows an abbreviated cheat sheet for Nmap arguments
+.NOTES
+    @Kal Ulin 2021
+#>
 function Show-NmapCheatSheet {
-
+    [CmdletBinding()]
+    param ()
 
 $Sheet = @"
 
 == DISCOVERY ===============================
     * -sn/-sP: NO PORT scan (ICMP or ARP) : nmap -sP 192.168.0.1
-    * -PN    : NO PING scan : nmap -PN 192.168.0.1
-    * -PR    : ARP on LAN: nmap -PR 192.168.0.1
+    * -Pn    : NO PING scan : nmap -Pn 192.168.0.1
+    * -PR    : ARP scan on LAN: nmap -PR 192.168.0.1
     * -n     : NO DNS resolution: nmap -n 192.168.0.1
 
 == VERSION DETECTION ===============================

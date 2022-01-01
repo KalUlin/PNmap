@@ -1,3 +1,14 @@
+<#
+.SYNOPSIS
+    Displays the Powershell Nmap object
+.DESCRIPTION
+    Displays the Nmap object as a list if it contains only one host or as a table if multiple hosts.
+    If multiple hosts it mostly only displays the properties that have data in them
+.INPUTS
+    Powershell Nmap object
+.OUTPUTS
+    On screen display of the object
+#>
 function Show-NmapOutput {
    [CmdletBinding()]
    param (

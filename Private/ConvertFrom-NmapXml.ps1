@@ -1,4 +1,14 @@
-
+<#
+.SYNOPSIS
+    Converts the nmap xml file into a Powershell object
+.INPUTS
+    Path where the nmap xml file is located
+.OUTPUTS
+    Powershell object representing the nmap search
+.NOTES
+    This Nmap Xml parser is a modified version of the original:
+        https://github.com/SamuelArnold/StarKill3r/blob/master/Star%20Killer/Star%20Killer/bin/Debug/Scripts/SANS-SEC505-master/scripts/Day1-PowerShell/Parse-Nmap.ps1
+#>
 function ConvertFrom-NmapXml {
     param ($Path, [String] $OutputDelimiter = "`n", [Switch] $RunStatsOnly)
 	

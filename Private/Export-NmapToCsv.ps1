@@ -1,3 +1,8 @@
+<#
+.SYNOPSIS
+    Exports the Powershell Nmap Object to CSV and creates the export folder if it doesn't exit
+
+#>
 function Export-NmapToCsv {
     [CmdletBinding()]
     param (
